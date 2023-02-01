@@ -24,12 +24,7 @@ export async function appRoutes(app: FastifyInstance) {
       },
     });
 
-    const token = app.jwt.sign({
-      payload: { username, password },
-      expiresIn: 3600,
-    });
-
-    reply.send({ userId: newUser.id, token: token });
+    reply.send({ userId: newUser.id });
   });
 
   app.post('/login', async (request, reply) => {

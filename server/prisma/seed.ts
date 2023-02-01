@@ -22,11 +22,21 @@ async function run() {
   await prisma.day.deleteMany();
   const daysSinceYearBeginning = generateDateFromYearBeginning();
 
-  const data = await Promise.all(
+  // creates all days since the beginning of the year
+  await Promise.all(
     daysSinceYearBeginning.map((day) => {
       return prisma.day.create({ data: { date: day } });
     })
   );
+
+  // creates a default user
+  await prisma.user.create({
+    data: {
+      username: 'default_user',
+      password: '123456',
+      created_at: dayjs().startOf('day').toDate(),
+    },
+  });
 }
 
 run()
