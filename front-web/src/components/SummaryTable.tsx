@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { api } from '../lib/axios';
+import { getItem } from '../services/localStorageService';
 import { generateDateFromYearBeginning } from '../utils/generate-dates-from-year-beginning';
 import { HabitDay } from './HabitDay';
 
@@ -22,13 +23,17 @@ export function SummaryTable() {
   const [summary, setSummary] = useState<Summary>([]);
 
   useEffect(() => {
-    api.get('summary').then((response) => {
-      setSummary(response.data);
-    });
+    const userId = getItem('user-id');
+    api
+      .get('summary', { params: { userId: userId } })
+      .then((response) => {
+        setSummary(response.data);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   return (
-    <div className='w-full flex '>
+    <div className='w-full flex'>
       <div className='grid grid-rows-7 grid-flow-row gap-3'>
         {weekDays.map((day, index) => (
           <div
