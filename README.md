@@ -50,7 +50,7 @@ npm ci
 Agora, crie um arquivo `.env` na raiz do diretório `server` e adicione as seguintes linhas:
 
 ```javascript
-DATABASE = 'file:dev.db'
+DATABASE = 'postgresql_connection_url'
 SECRET_KEY = 'your_secret_key'
 ```
 
