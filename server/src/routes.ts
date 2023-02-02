@@ -59,7 +59,7 @@ export async function appRoutes(app: FastifyInstance) {
     async (request: any) => {
       const createHabitBody = z.object({
         title: z.string(),
-        weekDays: z.array(z.number().min(0).max(6)),
+        weekDays: z.array(z.number().min(1).max(7)),
         userId: z.string().uuid(),
       });
 
@@ -159,6 +159,11 @@ export async function appRoutes(app: FastifyInstance) {
     }
   );
 
+  app.get('/days', async (request) => {
+    const days = await prisma.day.findMany();
+    return days;
+  });
+
   app.get(
     '/summary',
     // @ts-ignore
@@ -171,18 +176,18 @@ export async function appRoutes(app: FastifyInstance) {
         D.date,
         (
           SELECT
-           cast(count(*) as float)
+           CAST(count(*) as float)
           FROM day_habits DH
           WHERE DH.day_id = D.id
         ) as completed,
         (
           SELECT
-           cast(count(*) as float)
+           CAST(count(*) as float)
           FROM habit_week_days HWD
           JOIN habits H
            ON H.id = HWD.habit_id
           WHERE
-           HWD.week_day = cast(strftime('%w', D.date/1000.0, 'unixepoch') as int)
+           HWD.week_day = CAST(to_char(D.date, 'D') as int)
            AND H.created_at <= D.date AND H.user_id = ${userId}
         ) as amount
       FROM days as D
